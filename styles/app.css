@@ -1,7 +1,16 @@
 body {
+    /* background-image: url('../images/bg.jpg');
+    background-repeat: no-repeat;
+    background-size: cover; */
+    height: 100vh;
+}
+.divMain {
     background-image: url('../images/bg.jpg');
     background-repeat: no-repeat;
     background-size: cover;
+    height: 100%;
+    width: auto;
+    /* height: 100vh; */
 }
 .transparent {
     min-height: 100vh;
@@ -55,7 +64,6 @@ body {
 .fade-enter, .fade-leave-to {
     opacity: 0;
 }
-
 
 
 @keyframes fade {
