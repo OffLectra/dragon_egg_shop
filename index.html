@@ -36,7 +36,8 @@
                         <li 
                             v-for="(egg, index) of filteredEggs"
                             class="list-group-item list-group-item-action pointer"
-                            v-on:click="selectEgg(index)"
+                            v-on:click="selectEgg(index,egg.id)"
+                            
                             v-bind:class="{'active': selectedEggIndex === index}"
                         >
                             {{ egg.kind }} - {{ egg.type }}
@@ -45,7 +46,7 @@
                 </div>
 
 
-                <div class="col-md-8 pt-3">
+                <div class="col-md-8 pt-3 ps-5">
                     <div class="row">
                         <div class="col-md-5">
                             <h2>{{ egg.kind }}</h2>
@@ -70,7 +71,9 @@
 
                             <p>Owner - {{ egg.owner }}</p>
                             <div class="class-block">
-                                <p v-if="phoneVisibility">{{ egg.phone }}</p>
+                                <transition name="phone">
+                                    <p v-if="phoneVisibility">{{ egg.phone }}</p>
+                                </transition>
                             </div>
 
                             <button 
@@ -81,11 +84,87 @@
                             <!-- можно писать @click="phoneVisibility = true" -->
                             <!-- можно писать {{ phoneBtnText }} ниже вместо атрибута v-text="phoneBtnText"-->
                                 </button>
-                            <button class="btn btn-primary">Buy</button>
+                            <button class="btn btn-primary" @click="modalVisibility = true">Buy</button>
                         </div>
                     </div>
                 </div>
             </div>
+
+
+            <div class="row pt-3" v-if="logs.length !== 0">
+                <div class="col-md-12">
+                    <ul class="list-group">
+                        <li 
+                            v-for="log in logs"
+                            class="list-group-item list-group-item-secondary"
+                            :class="{
+                                'list-group-item-secondary': log.type === 'cancel',
+                                'list-group-item-success': log.type === 'ok'
+                            }"
+                        >
+                            {{ log.text }} {{ log.date | date }}
+                        </li>
+                        <!-- <li class="list-group-item list-group-item-success">Простой success элемент группы списка</li> -->
+                    </ul>
+                </div>
+            </div>
+
+            <transition name="modal">
+                <div class="modal fade show" v-if="modalVisibility" tabindex="-1">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Do you want to buy this egg?</h5>
+                                <button 
+                                    type="button" 
+                                    class="btn-close" 
+                                    data-bs-dismiss="modal" 
+                                    aria-label="Close"
+                                    @click="modalVisibility = false"
+                                ></button>
+                            </div>
+                            <div class="modal-body">
+                                <p>Current egg - <strong>{{ egg.kind }}</strong> </p>
+    
+                                <ul>
+                                    <li>Kind -    <strong>{{ egg.kind }}</strong></li>
+                                    <li>Type -    <strong>{{ egg.type }}</strong></li>
+                                    <li>Habitat - <strong>{{ egg.habitat }}</strong></li>
+                                    <li>Size -    <strong>{{ egg.size }}</strong></li>
+                                    <li>Danger -  <strong>{{ egg.danger }}</strong></li>
+                                    <!-- <li>Owner -   <strong>{{ egg.owner }}</strong></li> -->
+                                </ul>
+    
+                            </div>
+                            <div class="modal-footer">
+                                <button 
+                                    type="button" 
+                                    class="btn btn-secondary" 
+                                    data-bs-dismiss="modal"
+                                    @click="cancelOrder"
+                                >
+                                    Cancel
+                                </button>
+                                <button 
+                                    type="button" 
+                                    class="btn btn-primary"
+                                    @click="newOrder"
+                                >
+                                    Buy
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </transition>
+
+            <transition name="fade">
+                <div class="modal-backdrop fade show" v-if="modalVisibility"></div>
+            </transition>
+            
+
+              
+
         </div>
 
         <script src="https://cdn.jsdelivr.net/npm/vue@2.7.8/dist/vue.js"></script>
